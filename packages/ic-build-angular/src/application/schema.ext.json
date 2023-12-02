@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "IcBuildAngularApplicationSchema",
+  "title": "Internet Computer application build target",
+  "description": "Internet Computer application builder options",
+  "properties": {
+    "dfx": {
+      "type": "string",
+      "description": "The full path for the DFX configuration file, relative to the current workspace."
+    }
+  }
+}

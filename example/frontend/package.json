@@ -1,0 +1,8 @@
+{
+  "name": "example",
+  "private": true,
+  "scripts": {
+    "build": "dfx generate example_backend && ng build example",
+    "start": "dfx generate example_backend && ng serve example"
+  }
+}

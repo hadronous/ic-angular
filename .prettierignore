@@ -1,0 +1,10 @@
+.env
+.angular
+.dfx/
+target/
+
+dist/
+node_modules/
+
+.DS_Store
+**/.DS_Store

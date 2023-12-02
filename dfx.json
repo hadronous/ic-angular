@@ -1,0 +1,27 @@
+{
+  "dfx": "0.15.1",
+  "version": 1,
+  "output_env_file": ".env",
+  "canisters": {
+    "example_backend": {
+      "main": "example/backend/main.mo",
+      "type": "motoko",
+      "optimize": "cycles",
+      "declarations": {
+        "bindings": ["js", "ts"],
+        "output": "example/declarations"
+      }
+    },
+    "example_frontend": {
+      "dependencies": ["example_backend"],
+      "frontend": {
+        "entrypoint": "example/frontend/dist/browser/index.html"
+      },
+      "source": ["example/frontend/dist/browser"],
+      "build": ["pnpm -F frontend... build"],
+      "type": "assets",
+      "gzip": true,
+      "optimize": "cycles"
+    }
+  }
+}

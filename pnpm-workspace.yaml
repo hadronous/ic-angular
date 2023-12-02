@@ -1,0 +1,4 @@
+packages:
+  - "packages/ic-angular"
+  - "packages/ic-build-angular"
+  - "example/frontend"

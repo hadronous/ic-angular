@@ -1,0 +1,17 @@
+{
+  "name": "@hadronous/ic-angular",
+  "scripts": {
+    "build": "ng build ic-angular -c production",
+    "build:dev": "ng build ic-angular -c development"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "publishConfig": {
+    "directory": "./dist"
+  },
+  "peerDependencies": {
+    "@angular/core": "^17.0.0",
+    "@dfinity/agent": "~0.20.2",
+    "@dfinity/candid": "0.20.2"
+  }
+}
