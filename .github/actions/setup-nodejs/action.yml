@@ -1,0 +1,11 @@
+name: Setup NodeJS
+description: Setup NodeJS
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install NodeJS
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20
+        registry-url: 'https://registry.npmjs.org'

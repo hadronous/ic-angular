@@ -6,5 +6,12 @@ target/
 dist/
 node_modules/
 
+pnpm-lock.yaml
+/docs/build/
+/docs/docs/ic-angular/
+/docs/docs/ic-build-angular/
+/docs/.docusaurus/
+/examples
+
 .DS_Store
 **/.DS_Store

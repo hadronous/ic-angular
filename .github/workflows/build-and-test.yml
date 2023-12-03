@@ -1,0 +1,36 @@
+name: Build & Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build_and_test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - uses: ./.github/actions/setup-pnpm
+
+      - uses: ./.github/actions/setup-dfx
+
+      - name: Start DFX
+        run: dfx start --background
+
+      - name: Build ic-build-angular
+        run: pnpm run -F @hadronous/ic-build-angular build
+
+      - name: Build ic-angular
+        run: pnpm run -F @hadronous/ic-angular build
+
+      - name: Build example
+        run: pnpm run -F example build
+
+      - name: Test
+        run: pnpm run -r test

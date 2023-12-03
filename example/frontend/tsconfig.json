@@ -5,10 +5,7 @@
   "compilerOptions": {
     "outDir": "./out-tsc/app",
     "types": ["node"],
-    "lib": [
-      "ES2022",
-      "dom"
-    ],
+    "lib": ["ES2022", "dom"],
     "sourceMap": true,
     "declaration": false,
     "downlevelIteration": true,
