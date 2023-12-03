@@ -2,7 +2,8 @@
   "name": "@hadronous/ic-angular",
   "scripts": {
     "build": "ng build ic-angular -c production",
-    "build:dev": "ng build ic-angular -c development"
+    "build:dev": "ng build ic-angular -c development",
+    "docs": "typedoc --options ./typedoc.json"
   },
   "type": "module",
   "sideEffects": false,

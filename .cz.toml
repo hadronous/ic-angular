@@ -1,0 +1,10 @@
+[tool.commitizen]
+name = "cz_conventional_commits"
+tag_format = "$version"
+update_changelog_on_bump = true
+version_scheme = "semver"
+version = "0.0.0"
+version_files = [
+  "packages/ic-angular/package.json",
+  "packages/ic-build-angular/package.json",
+]

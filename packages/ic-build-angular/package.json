@@ -2,7 +2,8 @@
   "name": "@hadronous/ic-build-angular",
   "private": true,
   "scripts": {
-    "build": "tsc && node ./build.mjs"
+    "build": "tsc && node ./build.mjs",
+    "docs": "typedoc --options ./typedoc.json"
   },
   "builders": "builders.json",
   "module": "dist/index.js",
