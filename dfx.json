@@ -9,7 +9,7 @@
       "optimize": "cycles",
       "declarations": {
         "bindings": ["js", "ts"],
-        "output": "example/declarations"
+        "output": "../declarations"
       }
     },
     "example_frontend": {
