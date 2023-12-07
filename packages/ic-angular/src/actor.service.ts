@@ -1,15 +1,18 @@
-import { Injectable, Type } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Actor, ActorMethod } from '@dfinity/agent';
 import { IDL } from '@dfinity/candid';
+import { Principal } from '@dfinity/principal';
 import { IcAgentService } from './agent.service';
 
 export type ActorInterface = Record<string, ActorMethod>;
 
-export type IcpActor<T = ActorInterface> = Type<T>;
+export interface IcpActor<T = ActorInterface> extends Function {
+  new (agentService: IcAgentService): T;
+}
 
 export interface CreateActorOptions {
   idlFactory: IDL.InterfaceFactory;
-  canisterId: string;
+  canisterId: string | Principal;
 }
 
 export function createActorService<T = Record<string, ActorMethod>>({

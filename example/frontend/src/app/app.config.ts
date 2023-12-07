@@ -1,6 +1,6 @@
 import { ApplicationConfig } from '@angular/core';
 import { provideIcAgent, provideIcAuth } from '@hadronous/ic-angular';
-import { environment } from '../environments/enviornment';
+import { environment } from '../environments/environment';
 
 import { BackendActorService } from './backend-actor.service';
 

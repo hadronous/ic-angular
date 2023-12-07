@@ -41,3 +41,43 @@ Install dependencies:
 ```bash
 pnpm i
 ```
+
+#### Google Chrome in WSL
+
+Google Chrome installation instructions are based on those provided by [Microsoft](https://learn.microsoft.com/en-us/windows/wsl/tutorials/gui-apps#install-google-chrome-for-linux).
+
+Change directory to temporary folder:
+
+```shell
+cd /tmp
+```
+
+Download the latest stable Google Chrome:
+
+```shell
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+```
+
+Install the downloaded package:
+
+```shell
+sudo dpkg -i google-chrome-stable_current_amd64.deb
+```
+
+Fix the package:
+
+```shell
+sudo apt install --fix-broken -y
+```
+
+Configure the package:
+
+```shell
+sudo dpkg -i google-chrome-stable_current_amd64.deb
+```
+
+Test the installation by running Google Chrome:
+
+```shell
+google-chrome
+```
