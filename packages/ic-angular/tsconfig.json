@@ -2,6 +2,8 @@
   "extends": "../../tsconfig.json",
   "include": ["src"],
   "compilerOptions": {
+    "lib": ["ES2022", "dom"],
+    "experimentalDecorators": true,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,

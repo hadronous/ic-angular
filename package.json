@@ -3,8 +3,8 @@
   "private": true,
   "packageManager": "pnpm@8.11.0",
   "engines": {
-    "node": "^20",
-    "pnpm": "^8",
+    "node": "20.10.0",
+    "pnpm": "8.11.0",
     "npm": "please use pnpm"
   },
   "scripts": {
@@ -21,7 +21,9 @@
     "@angular/core": "^17.0.5",
     "@angular/platform-browser": "^17.0.5",
     "@dfinity/agent": "~0.20.2",
-    "@dfinity/candid": "0.20.2",
+    "@dfinity/auth-client": "~0.20.2",
+    "@dfinity/candid": "~0.20.2",
+    "@hadronous/ic-build-angular": "workspace:*",
     "@types/node": "^20.10.3",
     "dotenv": "^16.3.1",
     "esbuild": "0.19.5",
@@ -31,7 +33,6 @@
     "rxjs": "^7.8.1",
     "tslib": "^2.6.2",
     "typescript": "~5.2.2",
-    "zone.js": "~0.14.2",
-    "@hadronous/ic-build-angular": "workspace:*"
+    "zone.js": "~0.14.2"
   }
 }
