@@ -3,7 +3,9 @@
   "scripts": {
     "build": "ng build ic-angular -c production",
     "build:dev": "ng build ic-angular -c development",
-    "docs": "typedoc --options ./typedoc.json"
+    "docs": "typedoc --options ./typedoc.json",
+    "test": "ng test ic-angular",
+    "test:ci": "ng test --no-watch --no-progress --browsers=ChromeHeadless"
   },
   "type": "module",
   "sideEffects": false,
@@ -15,6 +17,7 @@
     "@dfinity/agent": "~0.20.2",
     "@dfinity/candid": "~0.20.2",
     "@dfinity/auth-client": "~0.20.2",
+    "@dfinity/principal": "~0.20.2",
     "rxjs": "^7.8.1"
   }
 }

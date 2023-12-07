@@ -28,6 +28,7 @@ echo "****** SYSTEM SETUP: Installing FNM ******"
 curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell --install-dir ~/.fnm
 
 echo "****** SYSTEM SETUP: FNM version ******"
+export PATH="~/.fnm:$PATH"
 fnm --version
 
 # Set up NodeJS
