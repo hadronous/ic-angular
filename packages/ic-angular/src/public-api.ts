@@ -1,8 +1,8 @@
 export {
-  IcpActor,
+  IcActor,
   ActorInterface,
   ProvideActorOptions,
-  createActorService,
+  createIcActorService,
 } from './actor.service';
 export {
   IcAgentService,

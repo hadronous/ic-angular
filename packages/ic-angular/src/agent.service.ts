@@ -1,7 +1,6 @@
 import {
   APP_INITIALIZER,
   EnvironmentProviders,
-  Inject,
   Injectable,
   InjectionToken,
   makeEnvironmentProviders,
@@ -10,27 +9,18 @@ import { HttpAgent, Identity } from '@dfinity/agent';
 
 @Injectable({ providedIn: 'root' })
 export class IcAgentService {
-  private readonly agent: HttpAgent;
-
-  constructor(@Inject(IC_AGENT_OPTIONS) options: IcAgentOptions) {
-    this.agent = new HttpAgent({
-      host: options.apiGateway,
-      verifyQuerySignatures: options.verifyQuerySignatures,
-      retryTimes: options.retryTimes,
-      useQueryNonces: options.useQueryNonces,
-    });
-  }
+  constructor(private readonly httpAgent: HttpAgent) {}
 
   public getInnerAgent(): HttpAgent {
-    return this.agent;
+    return this.httpAgent;
   }
 
   public async fetchRootKey(): Promise<void> {
-    await this.agent.fetchRootKey();
+    await this.httpAgent.fetchRootKey();
   }
 
   public replaceIdentity(identity: Identity): void {
-    this.agent.replaceIdentity(identity);
+    this.httpAgent.replaceIdentity(identity);
   }
 }
 
@@ -46,6 +36,17 @@ export const IC_AGENT_OPTIONS = new InjectionToken<IcAgentOptions>(
   'IC_AGENT_OPTIONS',
 );
 
+function agentServiceFactory(options: IcAgentOptions): IcAgentService {
+  const httpAgent = new HttpAgent({
+    host: options.apiGateway,
+    verifyQuerySignatures: options.verifyQuerySignatures,
+    retryTimes: options.retryTimes,
+    useQueryNonces: options.useQueryNonces,
+  });
+
+  return new IcAgentService(httpAgent);
+}
+
 function fetchRootKeyFactory(
   agentService: IcAgentService,
   options: IcAgentOptions,
@@ -59,7 +60,11 @@ function fetchRootKeyFactory(
 
 export function provideIcAgent(options: IcAgentOptions): EnvironmentProviders {
   return makeEnvironmentProviders([
-    IcAgentService,
+    {
+      provide: IcAgentService,
+      useFactory: agentServiceFactory,
+      deps: [IC_AGENT_OPTIONS],
+    },
     { provide: IC_AGENT_OPTIONS, useValue: options },
     {
       provide: APP_INITIALIZER,
