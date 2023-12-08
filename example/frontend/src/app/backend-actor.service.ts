@@ -1,4 +1,5 @@
-import { createActorService } from '@hadronous/ic-angular';
+import { Injectable } from '@angular/core';
+import { createIcActorService } from '@hadronous/ic-angular';
 import { environment } from '../environments/environment';
 
 // temporary fix until DFX upgrades to Candid version 0.10.0
@@ -7,7 +8,8 @@ import { environment } from '../environments/environment';
 const { idlFactory } = require('../../../declarations/example_backend.did');
 import { _SERVICE } from '../../../declarations/example_backend.did';
 
-export class BackendActorService extends createActorService<_SERVICE>({
+@Injectable({ providedIn: 'root' })
+export class BackendActorService extends createIcActorService<_SERVICE>({
   idlFactory,
   canisterId: environment.BACKEND_CANISTER_ID,
 }) {}

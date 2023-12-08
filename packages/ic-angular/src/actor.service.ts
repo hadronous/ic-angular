@@ -6,7 +6,7 @@ import { IcAgentService } from './agent.service';
 
 export type ActorInterface = Record<string, ActorMethod>;
 
-export interface IcpActor<T = ActorInterface> extends Function {
+export interface IcActor<T = ActorInterface> extends Function {
   new (agentService: IcAgentService): T;
 }
 
@@ -15,10 +15,10 @@ export interface CreateActorOptions {
   canisterId: string | Principal;
 }
 
-export function createActorService<T = Record<string, ActorMethod>>({
+export function createIcActorService<T = Record<string, ActorMethod>>({
   idlFactory,
   canisterId,
-}: CreateActorOptions): IcpActor<T> {
+}: CreateActorOptions): IcActor<T> {
   const ActorClass = Actor.createActorClass(idlFactory);
 
   @Injectable({ providedIn: 'root' })
@@ -31,7 +31,7 @@ export function createActorService<T = Record<string, ActorMethod>>({
     }
   }
 
-  return IcActorService as IcpActor<T>;
+  return IcActorService as IcActor<T>;
 }
 
 export interface ProvideActorOptions {
