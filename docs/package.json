@@ -3,8 +3,8 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "docusaurus start",
-    "build": "docusaurus build",
+    "start": "TYPEDOC_WATCH=true docusaurus start --no-open",
+    "build": "TYPEDOC_WATCH=false docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
@@ -30,9 +30,9 @@
     "@types/react": "^16.8.0",
     "search-insights": "^2.11.0",
     "@algolia/client-search": "^4.20.0",
-    "docusaurus-plugin-typedoc": "^0.21.0",
+    "docusaurus-plugin-typedoc": "1.0.0-next.23",
     "typedoc": "^0.25.4",
-    "typedoc-plugin-markdown": "^3.17.1"
+    "typedoc-plugin-markdown": "4.0.0-next.36"
   },
   "browserslist": {
     "production": [

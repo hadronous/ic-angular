@@ -13,15 +13,9 @@ const commonTypeDocOptions = {
   excludeExternals: true,
   categorizeByGroup: false,
   sourceLinkExternal: true,
-  categoryOrder: ['API', 'Types', '*'],
+  mergeReadme: true,
+  watch: process.env.TYPEDOC_WATCH,
   sort: ['source-order'],
-  navigation: {
-    includeCategories: true,
-    includeGroups: false,
-  },
-  searchCategoryBoosts: {
-    API: 1.5,
-  },
 };
 
 const config: Config = {
@@ -33,7 +27,7 @@ const config: Config = {
   projectName: 'ic-angular',
 
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  onBrokenMarkdownLinks: 'throw',
   i18n: {
     defaultLocale: 'en',
     locales: ['en'],
@@ -45,8 +39,6 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
         },
         theme: {
           customCss: './src/css/custom.css',
@@ -59,22 +51,24 @@ const config: Config = {
     [
       'docusaurus-plugin-typedoc',
       {
+        ...commonTypeDocOptions,
         id: 'ic-angular',
-        out: 'ic-angular',
+        out: 'docs/ic-angular',
         entryPoints: ['../packages/ic-angular/src/public-api.ts'],
         tsconfig: '../packages/ic-angular/tsconfig.json',
         readme: '../packages/ic-angular/README.md',
         sidebar: {
-          categoryLabel: 'ic-angular',
+          indexLabel: 'ic-angular',
+          pretty: true,
         },
-        ...commonTypeDocOptions,
       },
     ],
     [
       'docusaurus-plugin-typedoc',
       {
+        ...commonTypeDocOptions,
         id: 'ic-build-angular',
-        out: 'ic-build-angular',
+        out: 'docs/ic-build-angular',
         entryPoints: [
           '../packages/ic-build-angular/src/canister-plugin.ts',
           '../packages/ic-build-angular/src/application/index.ts',
@@ -83,9 +77,9 @@ const config: Config = {
         tsconfig: '../packages/ic-build-angular/tsconfig.json',
         readme: '../packages/ic-build-angular/README.md',
         sidebar: {
-          categoryLabel: 'ic-build-angular',
+          indexLabel: 'ic-build-angular',
+          pretty: true,
         },
-        ...commonTypeDocOptions,
       },
     ],
   ],

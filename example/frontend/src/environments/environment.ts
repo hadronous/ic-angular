@@ -1,6 +1,6 @@
 const DFX_NETWORK = import.meta.DFX_NETWORK ?? 'local';
 const IS_MAINNET = DFX_NETWORK === 'mainnet';
-const API_GATEWAY = IS_MAINNET ? 'https://icp-api.io' : undefined;
+const API_GATEWAY = IS_MAINNET ? 'https://icp-api.io' : window.location.origin;
 const IDENTITY_PROVIDER = IS_MAINNET
   ? 'https://identity.ic0.app/'
   : 'http://qhbym-qaaaa-aaaaa-aaafq-cai.localhost:8080/';
