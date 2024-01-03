@@ -1,3 +1,4 @@
+import { ApplicationInitStatus } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Identity } from '@dfinity/agent';
 import {
@@ -39,7 +40,7 @@ describe('IcAgentService', () => {
     it('should call the inner agent', async () => {
       await service.fetchRootKey();
 
-      expect(httpAgentMock.fetchRootKey).toHaveBeenCalled();
+      expect(httpAgentMock.fetchRootKey).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -51,50 +52,46 @@ describe('IcAgentService', () => {
 
       service.replaceIdentity(identity);
 
-      expect(httpAgentMock.replaceIdentity).toHaveBeenCalledWith(identity);
+      expect(httpAgentMock.replaceIdentity).toHaveBeenCalledOnceWith(identity);
+    });
+  });
+});
+
+describe('IcAgentService (with TestBed)', () => {
+  let agentServiceMock: AgentServiceMock;
+
+  beforeEach(() => {
+    agentServiceMock = createAgentServiceMock();
+
+    TestBed.configureTestingModule({
+      providers: [provideIcAgent({})],
     });
   });
 
-  describe('with TestBed', () => {
-    let agentServiceMock: AgentServiceMock;
+  it('should create', () => {
+    const result = TestBed.inject(IcAgentService);
 
-    beforeEach(() => {
-      agentServiceMock = createAgentServiceMock();
+    expect(result).toBeTruthy();
+    expect(result).toBeInstanceOf(IcAgentService);
+  });
 
-      TestBed.configureTestingModule({
-        providers: [provideIcAgent({})],
-      });
+  it('should not fetch root key', async () => {
+    TestBed.overrideProvider(IcAgentService, { useValue: agentServiceMock });
+    TestBed.overrideProvider(IC_AGENT_OPTIONS, {
+      useValue: { fetchRootKey: false },
     });
+    await TestBed.inject(ApplicationInitStatus).donePromise;
 
-    it('should create', () => {
-      const result = TestBed.inject(IcAgentService);
+    expect(agentServiceMock.fetchRootKey).not.toHaveBeenCalled();
+  });
 
-      expect(result).toBeTruthy();
-      expect(result).toBeInstanceOf(IcAgentService);
-
-      expect(agentServiceMock.fetchRootKey).not.toHaveBeenCalled();
+  it('should fetch root key', async () => {
+    TestBed.overrideProvider(IcAgentService, { useValue: agentServiceMock });
+    TestBed.overrideProvider(IC_AGENT_OPTIONS, {
+      useValue: { fetchRootKey: true },
     });
+    await TestBed.inject(ApplicationInitStatus).donePromise;
 
-    it('should not fetch root key', () => {
-      TestBed.overrideProvider(IcAgentService, { useValue: agentServiceMock });
-      TestBed.overrideProvider(IC_AGENT_OPTIONS, {
-        useValue: { fetchRootKey: false },
-      });
-
-      TestBed.inject(IcAgentService);
-
-      expect(agentServiceMock.fetchRootKey).not.toHaveBeenCalled();
-    });
-
-    it('should fetch root key', () => {
-      TestBed.overrideProvider(IcAgentService, { useValue: agentServiceMock });
-      TestBed.overrideProvider(IC_AGENT_OPTIONS, {
-        useValue: { fetchRootKey: true },
-      });
-
-      TestBed.inject(IcAgentService);
-
-      expect(agentServiceMock.fetchRootKey).toHaveBeenCalled();
-    });
+    expect(agentServiceMock.fetchRootKey).toHaveBeenCalledTimes(1);
   });
 });
