@@ -1,6 +1,6 @@
 {
   "name": "@hadronous/ic-build-angular",
-  "private": true,
+  "version": "0.0.0",
   "scripts": {
     "build": "tsc && node ./build.mjs",
     "docs": "typedoc --options ./typedoc.json"
