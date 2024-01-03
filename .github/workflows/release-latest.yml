@@ -21,8 +21,11 @@ jobs:
 
       - uses: ./.github/actions/setup-commitizen
 
-      - name: Build packages
-        run: pnpm build
+      - name: Build ic-build-angular
+        run: pnpm run -F @hadronous/ic-build-angular build
+
+      - name: Build ic-angular
+        run: pnpm run -F @hadronous/ic-angular build
 
       - name: Bump Version
         run: cz bump --files-only --yes
