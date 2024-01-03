@@ -1,5 +1,6 @@
 {
   "name": "@hadronous/ic-angular",
+  "version": "0.0.0",
   "scripts": {
     "build": "ng build ic-angular -c production",
     "build:dev": "ng build ic-angular -c development",
