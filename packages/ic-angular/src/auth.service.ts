@@ -1,4 +1,5 @@
 import {
+  APP_INITIALIZER,
   EnvironmentProviders,
   Inject,
   Injectable,
@@ -39,7 +40,6 @@ export class IcAuthService {
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
   private authClient: AuthClient | undefined;
-  private authClientPromise: Promise<AuthClient> | undefined;
 
   /**
    * @private
@@ -51,13 +51,25 @@ export class IcAuthService {
   ) {}
 
   /**
+   * Sets the inner auth client to be used by this service.
+   * Should not be called directly. This is handled by {@link provideIcAuth}.
+   *
+   * @private
+   */
+  public setAuthClient(authClient: AuthClient): void {
+    this.authClient = authClient;
+    this.authClient.idleManager?.registerCallback(
+      this.onIdleCallback.bind(this),
+    );
+  }
+
+  /**
    * Checks whether the user is currently logged in.
    *
-   * @returns A promise that resolves with a boolean to indicate
-   * whether the user is currently logged in.
+   * @returns A boolean to indicate whether the user is currently logged in.
    */
   public async isAuthenticated(): Promise<boolean> {
-    const authClient = await this.getAuthClient(this.options);
+    const authClient = this.getAuthClient();
 
     return await authClient.isAuthenticated();
   }
@@ -67,8 +79,8 @@ export class IcAuthService {
    *
    * @returns The current identity, or `undefined` if the user is not logged in.
    */
-  public async getIdentity(): Promise<Identity | undefined> {
-    const authClient = await this.getAuthClient(this.options);
+  public getIdentity(): Identity | undefined {
+    const authClient = this.getAuthClient();
 
     return authClient.getIdentity();
   }
@@ -81,7 +93,7 @@ export class IcAuthService {
    * or throws if authentication fails.
    */
   public async login(): Promise<void> {
-    const authClient = await this.getAuthClient(this.options);
+    const authClient = this.getAuthClient();
     const maxTimeToLive = this.options.maxTimeToLive
       ? this.options.maxTimeToLive * MS_PER_NS
       : undefined;
@@ -116,7 +128,7 @@ export class IcAuthService {
    * @returns A promise that resolves when the user is logged out.
    */
   public async logout(): Promise<void> {
-    const authClient = await this.getAuthClient(this.options);
+    const authClient = this.getAuthClient();
 
     await authClient.logout();
 
@@ -124,34 +136,15 @@ export class IcAuthService {
     this.identitySubject.next(null);
   }
 
-  private async getAuthClient(options: IcAuthOptions): Promise<AuthClient> {
-    if (this.authClient) {
-      return this.authClient;
+  private getAuthClient(): AuthClient {
+    if (!this.authClient) {
+      throw new Error('AuthClient is not initialized');
     }
-
-    if (this.authClientPromise) {
-      return this.authClientPromise;
-    }
-
-    this.authClientPromise = AuthClient.create({
-      identity: options.identity,
-      storage: options.storage,
-      keyType: options.keyType,
-      idleOptions: {
-        captureScroll: options.idlOptions?.captureScroll,
-        disableIdle: options.idlOptions?.disableIdle,
-        idleTimeout: options.idlOptions?.idleTimeout,
-        scrollDebounce: options.idlOptions?.scrollDebounce,
-        disableDefaultIdleCallback: true,
-        onIdle: this.onIdleCallback.bind(this),
-      },
-    });
-    this.authClient = await this.authClientPromise;
 
     return this.authClient;
   }
 
-  private async onIdleCallback(): Promise<void> {
+  private onIdleCallback(): void {
     // AuthClient is auto-logging out, even though the default idle callback is disabled
     // [TODO] - remove this once the issue is fixed
     this.isAuthenticatedSubject.next(false);
@@ -267,6 +260,28 @@ export interface IcAuthOptions {
 
 const IC_AUTH_OPTIONS = new InjectionToken<IcAuthOptions>('IC_AUTH_OPTIONS');
 
+function setAuthClientFactory(
+  authService: IcAuthService,
+  options: IcAuthOptions,
+): () => Promise<void> {
+  return async () => {
+    const authClient = await AuthClient.create({
+      identity: options.identity,
+      storage: options.storage,
+      keyType: options.keyType,
+      idleOptions: {
+        captureScroll: options.idlOptions?.captureScroll,
+        disableIdle: options.idlOptions?.disableIdle,
+        idleTimeout: options.idlOptions?.idleTimeout,
+        scrollDebounce: options.idlOptions?.scrollDebounce,
+        disableDefaultIdleCallback: true,
+      },
+    });
+
+    authService.setAuthClient(authClient);
+  };
+}
+
 /**
  * Provides an instance of {@link IcAuthService} to the Angular DI system.
  * Depends on {@link IcAgentService}.
@@ -300,5 +315,11 @@ export function provideIcAuth(options?: IcAuthOptions): EnvironmentProviders {
   return makeEnvironmentProviders([
     IcAuthService,
     { provide: IC_AUTH_OPTIONS, useValue: options },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: setAuthClientFactory,
+      deps: [IcAuthService, IC_AUTH_OPTIONS],
+      multi: true,
+    },
   ]);
 }

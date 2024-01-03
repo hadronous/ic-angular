@@ -19,26 +19,26 @@ import {
 import { IcAgentService } from './agent.service';
 import { Injectable } from '@angular/core';
 
+interface TestActor {
+  say_hello: ActorMethod<[], string>;
+  set_greeting: ActorMethod<[string], string>;
+}
+
+const idlFactory: IDL.InterfaceFactory = ({ IDL }) => {
+  return IDL.Service({
+    say_hello: IDL.Func([], [IDL.Text], ['query']),
+  });
+};
+
+const canisterId = Principal.fromUint8Array(new Uint8Array([0]));
+
+@Injectable({ providedIn: 'root' })
+class TestActorService extends createIcActorService<TestActor>({
+  idlFactory,
+  canisterId,
+}) {}
+
 describe('createActorService', () => {
-  interface TestActor {
-    say_hello: ActorMethod<[], string>;
-    set_greeting: ActorMethod<[string], string>;
-  }
-
-  const idlFactory: IDL.InterfaceFactory = ({ IDL }) => {
-    return IDL.Service({
-      say_hello: IDL.Func([], [IDL.Text], ['query']),
-    });
-  };
-
-  const canisterId = Principal.fromUint8Array(new Uint8Array([0]));
-
-  @Injectable({ providedIn: 'root' })
-  class TestActorService extends createIcActorService<TestActor>({
-    idlFactory,
-    canisterId,
-  }) {}
-
   let service: TestActorService;
   let httpAgentMock: HttpAgentMock;
   let agentServiceMock: AgentServiceMock;
@@ -74,7 +74,7 @@ describe('createActorService', () => {
 
     const result = await service.say_hello();
 
-    expect(httpAgentMock.query).toHaveBeenCalled();
+    expect(httpAgentMock.query).toHaveBeenCalledTimes(1);
     expect(result).toEqual('Hello');
   });
 
@@ -98,22 +98,29 @@ describe('createActorService', () => {
       new QueryCallRejectedError(canisterId, 'say_hello', response),
     );
   });
+});
 
-  describe('with TestBed', () => {
-    beforeEach(() => {
-      TestBed.configureTestingModule({
-        providers: [
-          TestActorService,
-          { provide: IcAgentService, useValue: agentServiceMock },
-        ],
-      });
+describe('createActorService (with TestBed)', () => {
+  let httpAgentMock: HttpAgentMock;
+  let agentServiceMock: AgentServiceMock;
+
+  beforeEach(() => {
+    httpAgentMock = createHttpAgentMock();
+    agentServiceMock = createAgentServiceMock();
+    agentServiceMock.getInnerAgent.and.returnValue(httpAgentMock);
+
+    TestBed.configureTestingModule({
+      providers: [
+        TestActorService,
+        { provide: IcAgentService, useValue: agentServiceMock },
+      ],
     });
+  });
 
-    it('should create', () => {
-      const injectedService = TestBed.inject(TestActorService);
+  it('should create', () => {
+    const injectedService = TestBed.inject(TestActorService);
 
-      expect(injectedService).toBeTruthy();
-      expect(injectedService).toBeInstanceOf(TestActorService);
-    });
+    expect(injectedService).toBeTruthy();
+    expect(injectedService).toBeInstanceOf(TestActorService);
   });
 });
