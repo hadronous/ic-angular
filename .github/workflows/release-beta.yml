@@ -10,7 +10,7 @@ jobs:
       contents: write
     environment:
       name: npm
-      url: https://www.npmjs.com/package/@hadronous/pic
+      url: https://www.npmjs.com/package/@hadronous/ic-angular
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -21,14 +21,14 @@ jobs:
 
       - uses: ./.github/actions/setup-commitizen
 
-      - name: Build ic-build-angular
-        run: pnpm run -F @hadronous/ic-build-angular build
-
-      - name: Build ic-angular
-        run: pnpm run -F @hadronous/ic-angular build
-
       - name: Bump Version
         run: cz bump --files-only --yes --prerelease beta
+
+      - name: Build ic-build-angular
+        run: pnpm -F @hadronous/ic-build-angular build
+
+      - name: Build ic-angular
+        run: pnpm -F @hadronous/ic-angular build
 
       - name: Get New Version
         run: echo "version=$(cz version --project)" >> "$GITHUB_ENV"
@@ -52,8 +52,8 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
         run: |
-          npm pack ./packages/ic-angular/
-          npm publish --verbose --access public --tag beta ./packages/ic-angular/
+          npm pack ./packages/ic-angular/dist
+          npm publish --verbose --access public --tag beta ./packages/ic-angular/dist
 
       - name: Publish ic-build-angular to npm
         env:
@@ -65,7 +65,9 @@ jobs:
       - name: Create Github release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: 'hadronous-pic-${{ env.version }}.tgz'
+          artifacts: >
+            'hadronous-ic-angular-${{ env.version }}.tgz',
+            'hadronous-ic-build-angular-${{ env.version }}.tgz'
           bodyFile: 'RELEASE_NOTES.md'
           tag: '${{ env.version }}'
           commit: 'main'

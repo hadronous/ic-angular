@@ -24,13 +24,13 @@ jobs:
         run: dfx start --background
 
       - name: Build ic-build-angular
-        run: pnpm run -F @hadronous/ic-build-angular build
+        run: pnpm -F @hadronous/ic-build-angular build
 
       - name: Build ic-angular
-        run: pnpm run -F @hadronous/ic-angular build
+        run: pnpm -F @hadronous/ic-angular build
 
       - name: Build example
-        run: pnpm run -F example build
+        run: pnpm -F example build
 
       - name: Test
-        run: pnpm run -r test:ci
+        run: pnpm -r test:ci

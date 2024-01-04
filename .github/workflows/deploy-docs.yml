@@ -16,7 +16,7 @@ jobs:
       - uses: ./.github/actions/setup-pnpm
 
       - name: Build Docs
-        run: pnpm run -F docs build
+        run: pnpm -F docs build
 
       - name: Fix permissions
         run: |
