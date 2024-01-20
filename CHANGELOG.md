@@ -1,3 +1,9 @@
+## Unreleased
+
+### Feat
+
+- isAuthenticated route guard
+
 ## 0.1.1 (2024-01-04)
 
 ### Fix
