@@ -44,11 +44,10 @@ describe('IcAuthService', () => {
     [true, false].forEach(isAuthenticated => {
       it(`should set the auth client and emit the authentication status (${isAuthenticated})`, async () => {
         service.setAuthClient(authClientMock);
-        authClientMock.isAuthenticated.and.returnValue(
-          Promise.resolve(isAuthenticated),
-        );
+        authClientMock.isAuthenticated.and.resolveTo(isAuthenticated);
 
         const result = await service.isAuthenticated();
+
         expect(result).toBe(isAuthenticated);
       });
     });
