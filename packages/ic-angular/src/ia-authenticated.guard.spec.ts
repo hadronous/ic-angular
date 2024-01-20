@@ -12,6 +12,14 @@ import { createAuthServiceMock } from './auth.service.mock';
 
 describe('isAuthenticatedGuard', () => {
   let authServiceMock = createAuthServiceMock();
+  const route = jasmine.createSpyObj<ActivatedRouteSnapshot>(
+    'ActivatedRouteSnapshot',
+    ['children'],
+  );
+  const state = jasmine.createSpyObj<RouterStateSnapshot>(
+    'RouterStateSnapshot',
+    ['url'],
+  );
 
   const executeGuard: CanActivateFn = (...guardParameters) =>
     TestBed.runInInjectionContext(() =>
@@ -25,37 +33,13 @@ describe('isAuthenticatedGuard', () => {
     });
   });
 
-  it('should allow access when user is authenticated', async () => {
-    const route = jasmine.createSpyObj<ActivatedRouteSnapshot>(
-      'ActivatedRouteSnapshot',
-      ['children'],
-    );
-    const state = jasmine.createSpyObj<RouterStateSnapshot>(
-      'RouterStateSnapshot',
-      ['url'],
-    );
+  [true, false].forEach(isAuthenticated => {
+    it(`should return ${isAuthenticated} when authService returns isAuthenticated with value ${isAuthenticated}`, async () => {
+      authServiceMock.isAuthenticated.and.resolveTo(isAuthenticated);
 
-    authServiceMock.isAuthenticated.and.resolveTo(true);
+      const result = await executeGuard(route, state);
 
-    const result = await executeGuard(route, state);
-
-    expect(result).toBe(true);
-  });
-
-  it('should not allow access when user is not authenticated', async () => {
-    const route = jasmine.createSpyObj<ActivatedRouteSnapshot>(
-      'ActivatedRouteSnapshot',
-      ['children'],
-    );
-    const state = jasmine.createSpyObj<RouterStateSnapshot>(
-      'RouterStateSnapshot',
-      ['url'],
-    );
-
-    authServiceMock.isAuthenticated.and.resolveTo(false);
-
-    const result = await executeGuard(route, state);
-
-    expect(result).toBe(false);
+      expect(result).toBe(isAuthenticated);
+    });
   });
 });
