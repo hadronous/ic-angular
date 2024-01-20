@@ -4,6 +4,10 @@
 
 - isAuthenticated route guard
 
+### Fix
+
+- authentication not initialized
+
 ## 0.1.1 (2024-01-04)
 
 ### Fix
