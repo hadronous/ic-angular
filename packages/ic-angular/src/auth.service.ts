@@ -56,11 +56,13 @@ export class IcAuthService {
    *
    * @private
    */
-  public setAuthClient(authClient: AuthClient): void {
+  public async init(authClient: AuthClient): Promise<void> {
     this.authClient = authClient;
     this.authClient.idleManager?.registerCallback(
       this.onIdleCallback.bind(this),
     );
+    this.isAuthenticatedSubject.next(await this.isAuthenticated());
+    this.identitySubject.next(this.getIdentity());
   }
 
   /**
@@ -77,9 +79,10 @@ export class IcAuthService {
   /**
    * Gets the current identity.
    *
-   * @returns The current identity, or `undefined` if the user is not logged in.
+   * @returns The identity of the current user. This is an anonymous identity
+   * if there is no user currently logged in.
    */
-  public getIdentity(): Identity | undefined {
+  public getIdentity(): Identity {
     const authClient = this.getAuthClient();
 
     return authClient.getIdentity();
@@ -278,7 +281,7 @@ function setAuthClientFactory(
       },
     });
 
-    authService.setAuthClient(authClient);
+    await authService.init(authClient);
   };
 }
 
