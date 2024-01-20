@@ -34,7 +34,7 @@ export function createAuthServiceMock(): AuthServiceMock {
   return jasmine.createSpyObj<IcAuthService>('IcAuthService', [
     'isAuthenticated',
     'getIdentity',
-    'setAuthClient',
+    'init',
     'login',
     'logout',
   ]);
