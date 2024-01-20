@@ -13,7 +13,7 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
-    "noImplicitReturns": true
+    "noImplicitReturns": true,
   },
-  "compileOnSave": false
+  "compileOnSave": false,
 }
