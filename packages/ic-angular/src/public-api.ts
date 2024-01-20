@@ -9,3 +9,4 @@ export {
   provideIcAgent,
 } from './agent.service';
 export { IcAuthService, IcAuthOptions, provideIcAuth } from './auth.service';
+export { isAuthenticatedGuard } from './is-authenticated.guard';
