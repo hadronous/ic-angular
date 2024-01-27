@@ -6,12 +6,14 @@ import {
   InjectionToken,
   makeEnvironmentProviders,
 } from '@angular/core';
-import { Identity, SignIdentity } from '@dfinity/agent';
+import { AnonymousIdentity, Identity, SignIdentity } from '@dfinity/agent';
 import { AuthClient, AuthClientCreateOptions } from '@dfinity/auth-client';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { IcAgentService } from './agent.service';
 
 const MS_PER_NS = 1_000_000n;
+
+const anonymousIdentity = new AnonymousIdentity();
 
 /**
  * An Angular-native service that provides a wrapper around the `AuthClient`
@@ -27,7 +29,7 @@ export class IcAuthService {
    */
   public onIdle$ = this.onIdleSubject.asObservable();
 
-  private identitySubject = new BehaviorSubject<Identity | null>(null);
+  private identitySubject = new BehaviorSubject<Identity>(anonymousIdentity);
   /**
    * An observable that emits the current identity.
    */
@@ -61,8 +63,8 @@ export class IcAuthService {
     this.authClient.idleManager?.registerCallback(
       this.onIdleCallback.bind(this),
     );
-    this.isAuthenticatedSubject.next(await this.isAuthenticated());
-    this.identitySubject.next(this.getIdentity());
+
+    await this.syncAuthState();
   }
 
   /**
@@ -108,16 +110,12 @@ export class IcAuthService {
         derivationOrigin: this.options.derivationOrigin,
         windowOpenerFeatures: this.options.windowOpenerFeatures,
         onSuccess: async () => {
-          const identity = authClient.getIdentity();
-          this.agentService.replaceIdentity(identity);
-          this.isAuthenticatedSubject.next(true);
-          this.identitySubject.next(identity);
+          await this.syncAuthState();
 
           return resolve();
         },
-        onError: err => {
-          this.isAuthenticatedSubject.next(false);
-          this.identitySubject.next(null);
+        onError: async err => {
+          await this.syncAuthState();
 
           return reject(err);
         },
@@ -134,9 +132,7 @@ export class IcAuthService {
     const authClient = this.getAuthClient();
 
     await authClient.logout();
-
-    this.isAuthenticatedSubject.next(false);
-    this.identitySubject.next(null);
+    await this.syncAuthState();
   }
 
   private getAuthClient(): AuthClient {
@@ -147,13 +143,22 @@ export class IcAuthService {
     return this.authClient;
   }
 
-  private onIdleCallback(): void {
+  private async onIdleCallback(): Promise<void> {
     // AuthClient is auto-logging out, even though the default idle callback is disabled
     // [TODO] - remove this once the issue is fixed
-    this.isAuthenticatedSubject.next(false);
-    this.identitySubject.next(null);
+    await this.logout();
 
     this.onIdleSubject.next();
+  }
+
+  private async syncAuthState(): Promise<void> {
+    const authClient = this.getAuthClient();
+    const isAuthenticated = await authClient.isAuthenticated();
+    const identity = authClient.getIdentity();
+
+    this.agentService.replaceIdentity(identity);
+    this.isAuthenticatedSubject.next(isAuthenticated);
+    this.identitySubject.next(identity);
   }
 }
 
