@@ -1,12 +1,17 @@
 ## 0.2.1 (2024-01-27)
 
+### Fix
+
+- sync auth state correctly
+
+## 0.2.0 (2024-01-20)
+
 ### Feat
 
 - isAuthenticated route guard
 
 ### Fix
 
-- sync auth state correctly
 - authentication not initialized
 
 ## 0.1.1 (2024-01-04)
