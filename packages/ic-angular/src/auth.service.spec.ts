@@ -12,6 +12,7 @@ import {
 } from './auth.service.mock';
 import { AuthClient } from '@dfinity/auth-client';
 import { ApplicationInitStatus } from '@angular/core';
+import { AnonymousIdentity } from '@dfinity/agent';
 
 type MockAuthOptions = Required<Omit<IcAuthOptions, 'identity' | 'storage'>>;
 
@@ -29,6 +30,7 @@ describe('IcAuthService', () => {
     keyType: 'Ed25519',
   };
   const identityMock = createIdentityMock();
+  const anonymousIdentity = new AnonymousIdentity();
 
   beforeEach(() => {
     agentServiceMock = createAgentServiceMock();
@@ -71,8 +73,7 @@ describe('IcAuthService', () => {
         successCallback = opts?.onSuccess;
       });
       authClientMock.isAuthenticated.and.resolveTo(false);
-
-      authClientMock.getIdentity.and.returnValue(identityMock);
+      authClientMock.getIdentity.and.returnValue(anonymousIdentity);
 
       const isAuthenticatedSpy = jasmine.createSpy('isAuthenticated');
       const identitySpy = jasmine.createSpy('identity');
@@ -81,15 +82,25 @@ describe('IcAuthService', () => {
 
       expect(isAuthenticatedSpy).toHaveBeenCalledOnceWith(false);
       isAuthenticatedSpy.calls.reset();
+      expect(identitySpy).toHaveBeenCalledWith(anonymousIdentity);
+      identitySpy.calls.reset();
 
       await service.init(authClientMock);
 
       expect(isAuthenticatedSpy).toHaveBeenCalledOnceWith(false);
       isAuthenticatedSpy.calls.reset();
-      expect(identitySpy).toHaveBeenCalledWith(null);
+      expect(agentServiceMock.replaceIdentity).toHaveBeenCalledOnceWith(
+        anonymousIdentity,
+      );
+      agentServiceMock.replaceIdentity.calls.reset();
+      expect(identitySpy).toHaveBeenCalledWith(anonymousIdentity);
       identitySpy.calls.reset();
 
       const resultPromise = service.login();
+
+      authClientMock.isAuthenticated.and.resolveTo(true);
+      authClientMock.getIdentity.and.returnValue(identityMock);
+
       successCallback?.();
       await resultPromise;
 
@@ -118,6 +129,7 @@ describe('IcAuthService', () => {
         errorCallback = opts?.onError;
       });
       authClientMock.isAuthenticated.and.resolveTo(false);
+      authClientMock.getIdentity.and.returnValue(anonymousIdentity);
 
       const isAuthenticatedSpy = jasmine.createSpy('isAuthenticated');
       const identitySpy = jasmine.createSpy('identity');
@@ -126,12 +138,18 @@ describe('IcAuthService', () => {
 
       expect(isAuthenticatedSpy).toHaveBeenCalledOnceWith(false);
       isAuthenticatedSpy.calls.reset();
+      expect(identitySpy).toHaveBeenCalledWith(anonymousIdentity);
+      identitySpy.calls.reset();
 
       await service.init(authClientMock);
 
       expect(isAuthenticatedSpy).toHaveBeenCalledOnceWith(false);
       isAuthenticatedSpy.calls.reset();
-      expect(identitySpy).toHaveBeenCalledWith(null);
+      expect(agentServiceMock.replaceIdentity).toHaveBeenCalledOnceWith(
+        anonymousIdentity,
+      );
+      agentServiceMock.replaceIdentity.calls.reset();
+      expect(identitySpy).toHaveBeenCalledWith(anonymousIdentity);
       identitySpy.calls.reset();
 
       const error = 'Login failed';
@@ -150,8 +168,13 @@ describe('IcAuthService', () => {
       });
 
       expect(isAuthenticatedSpy).toHaveBeenCalledOnceWith(false);
-      expect(agentServiceMock.replaceIdentity).not.toHaveBeenCalled();
-      expect(identitySpy).toHaveBeenCalledOnceWith(null);
+      isAuthenticatedSpy.calls.reset();
+      expect(agentServiceMock.replaceIdentity).toHaveBeenCalledOnceWith(
+        anonymousIdentity,
+      );
+      agentServiceMock.replaceIdentity.calls.reset();
+      expect(identitySpy).toHaveBeenCalledWith(anonymousIdentity);
+      identitySpy.calls.reset();
     });
   });
 
@@ -168,20 +191,29 @@ describe('IcAuthService', () => {
 
       expect(isAuthenticatedSpy).toHaveBeenCalledOnceWith(false);
       isAuthenticatedSpy.calls.reset();
-      expect(identitySpy).toHaveBeenCalledWith(null);
+      expect(identitySpy).toHaveBeenCalledWith(anonymousIdentity);
       identitySpy.calls.reset();
 
       await service.init(authClientMock);
 
       expect(isAuthenticatedSpy).toHaveBeenCalledOnceWith(true);
       isAuthenticatedSpy.calls.reset();
+      expect(agentServiceMock.replaceIdentity).toHaveBeenCalledOnceWith(
+        identityMock,
+      );
+      agentServiceMock.replaceIdentity.calls.reset();
       expect(identitySpy).toHaveBeenCalledOnceWith(identityMock);
       identitySpy.calls.reset();
 
+      authClientMock.isAuthenticated.and.resolveTo(false);
+      authClientMock.getIdentity.and.returnValue(anonymousIdentity);
       await service.logout();
 
       expect(isAuthenticatedSpy).toHaveBeenCalledOnceWith(false);
-      expect(identitySpy).toHaveBeenCalledOnceWith(null);
+      expect(agentServiceMock.replaceIdentity).toHaveBeenCalledOnceWith(
+        anonymousIdentity,
+      );
+      expect(identitySpy).toHaveBeenCalledOnceWith(anonymousIdentity);
     });
   });
 
@@ -190,9 +222,9 @@ describe('IcAuthService', () => {
       const idleManagerMock = createIdleManagerMock();
       authClientMock.idleManager = idleManagerMock;
 
-      let onIdleCallback: (() => void) | undefined;
+      let onIdleCallback: (() => Promise<void>) | undefined;
       idleManagerMock.registerCallback.and.callFake(onIdle => {
-        onIdleCallback = onIdle;
+        onIdleCallback = onIdle as () => Promise<void>;
       });
       authClientMock.isAuthenticated.and.resolveTo(true);
       authClientMock.getIdentity.and.returnValue(identityMock);
@@ -206,7 +238,7 @@ describe('IcAuthService', () => {
 
       expect(isAuthenticatedSpy).toHaveBeenCalledOnceWith(false);
       isAuthenticatedSpy.calls.reset();
-      expect(identitySpy).toHaveBeenCalledWith(null);
+      expect(identitySpy).toHaveBeenCalledWith(anonymousIdentity);
       identitySpy.calls.reset();
       expect(onIdleSpy).not.toHaveBeenCalled();
 
@@ -217,10 +249,12 @@ describe('IcAuthService', () => {
       expect(identitySpy).toHaveBeenCalledOnceWith(identityMock);
       identitySpy.calls.reset();
 
-      onIdleCallback?.();
+      authClientMock.isAuthenticated.and.resolveTo(false);
+      authClientMock.getIdentity.and.returnValue(anonymousIdentity);
+      await onIdleCallback?.();
 
       expect(isAuthenticatedSpy).toHaveBeenCalledOnceWith(false);
-      expect(identitySpy).toHaveBeenCalledOnceWith(null);
+      expect(identitySpy).toHaveBeenCalledOnceWith(anonymousIdentity);
       expect(onIdleSpy).toHaveBeenCalledOnceWith(undefined);
     });
   });
@@ -232,6 +266,7 @@ describe('IcAuthService (with TestBed)', () => {
 
   beforeEach(() => {
     authServiceMock = createAuthServiceMock();
+    agentServiceMock = createAgentServiceMock();
 
     TestBed.configureTestingModule({
       providers: [
