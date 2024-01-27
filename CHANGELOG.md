@@ -6,6 +6,7 @@
 
 ### Fix
 
+- sync auth state correctly
 - authentication not initialized
 
 ## 0.1.1 (2024-01-04)
