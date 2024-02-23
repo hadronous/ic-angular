@@ -66,7 +66,11 @@ export default function Home(): JSX.Element {
                 >
                   <i>canisters</i>
                 </a>
-                . Canisters can be written in any language that compiles to
+                .
+              </p>
+
+              <p>
+                Canisters can be written in any language that compiles to
                 WebAssembly (WASM), run arbitrary computations and even serve
                 web assets.
               </p>
