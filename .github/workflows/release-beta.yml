@@ -38,7 +38,7 @@ jobs:
         with:
           commit_message: 'chore: release ${{ env.version }}'
           commit_options: '--no-verify --signoff'
-          file_pattern: |
+          file_pattern: >
             .cz.toml
             CHANGELOG.md
             packages/ic-angular/package.json
@@ -46,7 +46,10 @@ jobs:
           tagging_message: '${{ env.version }}'
 
       - name: Generate Release Notes
-        run: cz changelog --incremental --file-name RELEASE_NOTES.md
+        run: |
+          cz changelog --incremental --file-name RELEASE_NOTES.md
+          RELEASE_NOTES=$(cat RELEASE_NOTES.md)
+          echo "release_notes=$RELEASE_NOTES" >> "$GITHUB_ENV"
 
       - name: Publish ic-angular to npm
         env:
@@ -68,7 +71,7 @@ jobs:
           artifacts: >
             'hadronous-ic-angular-${{ env.version }}.tgz',
             'hadronous-ic-build-angular-${{ env.version }}.tgz'
-          bodyFile: 'RELEASE_NOTES.md'
+          body: '${{ env.release_notes }}'
           tag: '${{ env.version }}'
           commit: 'main'
           prerelease: true
