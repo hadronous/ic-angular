@@ -1,5 +1,9 @@
 ## Unreleased
 
+### Feat
+
+- update agent-js dependencies
+
 ## 0.2.1 (2024-01-27)
 
 ### Feat
