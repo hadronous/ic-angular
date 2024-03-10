@@ -1,3 +1,10 @@
+## Unreleased
+
+### Fix
+
+- build docs only when release_latest is successful
+- move docs build and deployment to release workflow
+
 ## 0.3.0 (2024-02-24)
 
 ### Feat
