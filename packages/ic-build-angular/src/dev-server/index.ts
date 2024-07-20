@@ -2,14 +2,12 @@ import {
   type DevServerBuilderOptions,
   type DevServerBuilderOutput,
   executeDevServerBuilder,
-} from '@angular-devkit/build-angular';
+} from '@angular/build';
 import { type BuilderContext, createBuilder } from '@angular-devkit/architect';
 import { resolve } from 'node:path';
-import { type Observable } from 'rxjs';
 import { canisterPlugin } from '../canister-plugin';
 
-type Transforms = Parameters<typeof executeDevServerBuilder>[2];
-type Extensions = Parameters<typeof executeDevServerBuilder>[3];
+type Extensions = Parameters<typeof executeDevServerBuilder>[2];
 
 export interface IcDevServerBuilderOptions extends DevServerBuilderOptions {
   dfx?: string;
@@ -18,9 +16,8 @@ export interface IcDevServerBuilderOptions extends DevServerBuilderOptions {
 export function serveIcApplication(
   options: IcDevServerBuilderOptions,
   context: BuilderContext,
-  transforms: Transforms = {},
   extensions: Extensions = {},
-): Observable<DevServerBuilderOutput> {
+): AsyncIterable<DevServerBuilderOutput> {
   const dfx = options.dfx || './dfx.json';
   const dfxJsonPath = resolve(context.workspaceRoot, dfx);
   const dfxJson = require(dfxJsonPath);
@@ -38,11 +35,9 @@ export function serveIcApplication(
   return executeDevServerBuilder(
     {
       ...options,
-      forceEsbuild: true,
       proxyConfig,
     },
     context,
-    transforms,
     extensions,
   );
 }

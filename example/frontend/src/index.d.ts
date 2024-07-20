@@ -1,6 +1,5 @@
 interface ImportMeta {
-  EXAMPLE_BACKEND_CANISTER_ID?: string;
-  CANISTER_ID_BACKEND?: string;
+  CANISTER_ID_EXAMPLE_BACKEND?: string;
   DFX_NETWORK?: string;
 }
 

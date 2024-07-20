@@ -10,7 +10,7 @@ import {
   createIdentityMock,
   createIdleManagerMock,
 } from './auth.service.mock';
-import { AuthClient } from '@dfinity/auth-client';
+import { AuthClient, OnSuccessFunc } from '@dfinity/auth-client';
 import { ApplicationInitStatus } from '@angular/core';
 import { AnonymousIdentity } from '@dfinity/agent';
 
@@ -68,7 +68,7 @@ describe('IcAuthService', () => {
 
   describe('login', () => {
     it('should login successfully', async () => {
-      let successCallback: (() => void) | (() => Promise<void>) | undefined;
+      let successCallback: OnSuccessFunc | undefined;
       authClientMock.login.and.callFake(async opts => {
         successCallback = opts?.onSuccess;
       });
@@ -101,7 +101,12 @@ describe('IcAuthService', () => {
       authClientMock.isAuthenticated.and.resolveTo(true);
       authClientMock.getIdentity.and.returnValue(identityMock);
 
-      successCallback?.();
+      successCallback?.({
+        kind: 'authorize-client-success',
+        delegations: [],
+        userPublicKey: new Uint8Array(),
+        authnMethod: 'passkey',
+      });
       await resultPromise;
 
       expect(authClientMock.login).toHaveBeenCalledOnceWith({

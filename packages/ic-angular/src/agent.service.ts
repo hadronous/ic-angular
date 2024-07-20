@@ -15,7 +15,6 @@ import { HttpAgent, Identity } from '@dfinity/agent';
  *
  * Must be provided using the {@link provideIcAgent} function.
  *
- * @category Agent
  * @see [@dfinity/agent: HttpAgent](https://agent-js.icp.xyz/agent/classes/HttpAgent.html)
  *
  * @example
@@ -80,8 +79,6 @@ export class IcAgentService {
 
 /**
  * Options for providing the {@link IcAgentService} using {@link provideIcAgent}.
- *
- * @category Agent
  */
 export interface IcAgentOptions {
   /**
@@ -155,7 +152,6 @@ function fetchRootKeyFactory(
  * This is a necessary dependency for the {@link IcActorService} and
  * {@link IcAuthService} services.
  *
- * @category Agent
  * @see {@link IcAgentService}
  * @see {@link IcActorService}
  *

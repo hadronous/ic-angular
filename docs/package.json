@@ -4,7 +4,7 @@
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "TYPEDOC_WATCH=true docusaurus start --no-open",
-    "build": "TYPEDOC_WATCH=false docusaurus build",
+    "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
@@ -14,25 +14,25 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@docusaurus/core": "3.0.1",
-    "@docusaurus/preset-classic": "3.0.1",
-    "@docusaurus/theme-classic": "3.0.1",
-    "@mdx-js/react": "^3.0.0",
-    "clsx": "^2.0.0",
-    "prism-react-renderer": "^2.3.0",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "@docusaurus/core": "^3.4.0",
+    "@docusaurus/preset-classic": "^3.4.0",
+    "@docusaurus/theme-classic": "^3.4.0",
+    "@mdx-js/react": "^3.0.1",
+    "clsx": "^2.1.1",
+    "prism-react-renderer": "^2.3.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "3.0.1",
-    "@docusaurus/tsconfig": "3.0.1",
-    "@docusaurus/types": "3.0.1",
-    "@types/react": "^16.8.0",
-    "search-insights": "^2.11.0",
-    "@algolia/client-search": "^4.20.0",
-    "docusaurus-plugin-typedoc": "1.0.0-next.23",
-    "typedoc": "^0.25.4",
-    "typedoc-plugin-markdown": "4.0.0-next.36"
+    "@docusaurus/module-type-aliases": "^3.4.0",
+    "@docusaurus/tsconfig": "^3.4.0",
+    "@docusaurus/types": "^3.4.0",
+    "@types/react": "^18.3.3",
+    "search-insights": "^2.15.0",
+    "@algolia/client-search": "^4.24.0",
+    "docusaurus-plugin-typedoc": "^1.0.3",
+    "typedoc": "^0.26.4",
+    "typedoc-plugin-markdown": "^4.2.1"
   },
   "browserslist": {
     "production": [

@@ -1,12 +1,9 @@
 import {
   type ApplicationBuilderOptions,
+  ApplicationBuilderOutput,
   buildApplication,
-} from '@angular-devkit/build-angular';
-import {
-  type BuilderContext,
-  type BuilderOutput,
-  createBuilder,
-} from '@angular-devkit/architect';
+} from '@angular/build';
+import { type BuilderContext, createBuilder } from '@angular-devkit/architect';
 import { type Plugin } from 'esbuild';
 import { resolve } from 'node:path';
 import { canisterPlugin } from '../canister-plugin';
@@ -19,7 +16,7 @@ export function buildIcApplication(
   options: IcApplicationBuilderOptions,
   context: BuilderContext,
   plugins?: Plugin[],
-): AsyncIterable<BuilderOutput> {
+): AsyncIterable<ApplicationBuilderOutput> {
   const dfx = options.dfx || './dfx.json';
   const dfxJsonPath = resolve(context.workspaceRoot, dfx);
   const dfxJson = require(dfxJsonPath);

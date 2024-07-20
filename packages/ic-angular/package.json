@@ -16,12 +16,12 @@
     "directory": "./dist"
   },
   "peerDependencies": {
-    "@angular/core": "^17.0.0",
-    "@angular/router": "^17.0.0",
-    "@dfinity/agent": "^1.0.1",
-    "@dfinity/candid": "^1.0.1",
-    "@dfinity/auth-client": "^1.0.1",
-    "@dfinity/principal": "^1.0.1",
+    "@angular/core": "^18.0.0",
+    "@angular/router": "^18.0.0",
+    "@dfinity/agent": "^2.0.0",
+    "@dfinity/candid": "^2.0.0",
+    "@dfinity/auth-client": "^2.0.0",
+    "@dfinity/principal": "^2.0.0",
     "rxjs": "^7.8.0"
   }
 }

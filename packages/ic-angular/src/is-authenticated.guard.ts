@@ -5,7 +5,6 @@ import { IcAuthService } from './auth.service';
 /**
  * Route guard allowing navigation only when the current user is authenticated. Depends on {@link IcAuthService}.
  *
- * @category Auth
  * @see {@link IcAuthService}
  *
  * @example
