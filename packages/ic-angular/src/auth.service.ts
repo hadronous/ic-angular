@@ -18,8 +18,6 @@ const anonymousIdentity = new AnonymousIdentity();
 /**
  * An Angular-native service that provides a wrapper around the `AuthClient`
  * class from the `@dfinity/auth-client` library.
- *
- * @category Auth
  */
 @Injectable({ providedIn: 'root' })
 export class IcAuthService {
@@ -167,8 +165,6 @@ type BaseKeyType = AuthClientCreateOptions['keyType'];
 
 /**
  * Options for providing the {@link IcAuthService} using {@link provideIcAuth}.
- *
- * @category Auth
  */
 export interface IcAuthOptions {
   /**
@@ -294,7 +290,6 @@ function setAuthClientFactory(
  * Provides an instance of {@link IcAuthService} to the Angular DI system.
  * Depends on {@link IcAgentService}.
  *
- * @category Auth
  * @see {@link IcAgentService}
  * @see {@link provideIcAgent}
  *

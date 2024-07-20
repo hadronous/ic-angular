@@ -9,10 +9,9 @@
   "module": "dist/index.js",
   "typings": "dist/index.d.ts",
   "peerDependencies": {
-    "@angular-devkit/architect": "~0.1700.0",
-    "@angular-devkit/build-angular": "~17.0.0",
-    "esbuild": "0.19.5",
-    "rxjs": "^7.8.0",
-    "dotenv": "^16.0.0"
+    "@angular-devkit/architect": "~0.1801.0",
+    "@angular/build": "^18.0.0",
+    "esbuild": "0.21.5",
+    "dotenv": "^16.4.5"
   }
 }

@@ -11,11 +11,7 @@ export function canisterPlugin(envPath: string): Plugin {
   const definitions = Object.entries(process.env).reduce<Definitions>(
     (accum, [key, value]) => {
       key = key.toUpperCase();
-      if (
-        key.startsWith('CANISTER_ID_') ||
-        key.endsWith('_CANISTER_ID') ||
-        key === 'DFX_NETWORK'
-      ) {
+      if (key.startsWith('CANISTER_ID_') || key === 'DFX_NETWORK') {
         accum = {
           ...accum,
           [`import.meta.${key}`]: `"${value}"`,

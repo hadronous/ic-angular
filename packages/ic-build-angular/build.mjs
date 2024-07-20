@@ -48,7 +48,7 @@ await copyFile(proxyConfSrc, proxyConfDist);
 const applicationSchemeExtSrc = join(srcDir, 'application', 'schema.ext.json');
 const applicationSchemeDist = join(distDir, 'application', 'schema.json');
 const applicationSchemeExt = await readJsonFile(applicationSchemeExtSrc);
-const applicationSchema = require('@angular-devkit/build-angular/src/builders/application/schema.json');
+const applicationSchema = require('../../node_modules/@angular/build/src/builders/application/schema.json');
 const extendedApplicationSchema = extendScheme(
   applicationSchema,
   applicationSchemeExt,
@@ -58,7 +58,7 @@ await writeJsonFile(applicationSchemeDist, extendedApplicationSchema);
 const devServerSchemeExtSrc = join(srcDir, 'dev-server', 'schema.ext.json');
 const devServerSchemeDist = join(distDir, 'dev-server', 'schema.json');
 const devServerSchemeExt = await readJsonFile(devServerSchemeExtSrc);
-const devServerSchema = require('@angular-devkit/build-angular/src/builders/dev-server/schema.json');
+const devServerSchema = require('../../node_modules/@angular/build/src/builders/dev-server/schema.json');
 const extendedDevServerSchema = extendScheme(
   devServerSchema,
   devServerSchemeExt,

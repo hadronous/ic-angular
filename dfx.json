@@ -1,5 +1,5 @@
 {
-  "dfx": "0.15.2",
+  "dfx": "0.21.0",
   "version": 1,
   "output_env_file": ".env",
   "canisters": {
@@ -18,7 +18,7 @@
         "entrypoint": "example/frontend/dist/browser/index.html"
       },
       "source": ["example/frontend/dist/browser"],
-      "build": ["pnpm -F frontend... build"],
+      "build": ["pnpm -F example build"],
       "type": "assets",
       "gzip": true,
       "optimize": "cycles"

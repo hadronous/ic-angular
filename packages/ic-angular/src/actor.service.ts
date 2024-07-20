@@ -6,8 +6,6 @@ import { IcAgentService } from './agent.service';
 
 /**
  * Candid interface of a canister.
- *
- * @category Actor
  */
 export type ActorInterface = Record<string, ActorMethod>;
 
@@ -17,7 +15,6 @@ export type ActorInterface = Record<string, ActorMethod>;
  * {@link createIcActorService} mixin to create a concrete class that
  * implements this interface.
  *
- * @category Actor
  * @see [@dfinity/agent: Actor](https://agent-js.icp.xyz/agent/classes/Actor.html)
  *
  * @example
@@ -57,8 +54,6 @@ export interface IcActorService<T = ActorInterface> extends Function {
 
 /**
  * Options for creating a concrete {@link IcActorService} class.
- *
- * @category Actor
  */
 export interface CreateActorOptions {
   idlFactory: IDL.InterfaceFactory;
@@ -73,7 +68,6 @@ export interface CreateActorOptions {
  * @param options Options for creating a concrete {@link IcActorService} class.
  * @returns A concrete {@link IcActorService} class that can be used as an
  * `Injectable` service within the Angular dependency injection system.
- * @category Actor
  * @see {@link IcActorService}
  * @see {@link provideIcAgent}
  *
