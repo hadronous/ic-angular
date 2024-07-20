@@ -1,5 +1,9 @@
 ## Unreleased
 
+### Feat
+
+- upgrade to Angular 18
+
 ### Fix
 
 - build docs only when release_latest is successful
