@@ -1,3 +1,9 @@
+## Unreleased
+
+### Feat
+
+- upgrade to angular 19
+
 ## 0.4.1 (2024-07-20)
 
 ### Fix
