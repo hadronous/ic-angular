@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Actor, ActorMethod } from '@dfinity/agent';
 import { IDL } from '@dfinity/candid';
 import { Principal } from '@dfinity/principal';
@@ -23,10 +23,7 @@ export type ActorInterface = Record<string, ActorMethod>;
  * import { createActorService, provideIcAgent } from '@hadronous/ic-angular';
  * import { environment } from '../environments/environment';
  *
- * // temporary fix until DFX upgrades to Candid version 0.10.0
- * // with this version, the idlFactory will be correctly exported from the .did file
- * const { idlFactory } = require('../../../declarations/counter.did');
- * import { _SERVICE } from '../../../declarations/counter.did';
+ * import { idlFactory, _SERVICE } from '../../../declarations/example_backend.did';
  *
  * @Injectable({ providedIn: 'root' })
  * class CounterActorService extends createActorService<_SERVICE>({
@@ -40,7 +37,6 @@ export type ActorInterface = Record<string, ActorMethod>;
  *      apiGateway: environment.API_GATEWAY,
  *      fetchRootKey: !environment.IS_MAINNET,
  *    }),
- *    CounterActorService
  *  ],
  * };
  * ```
@@ -49,7 +45,7 @@ export interface IcActorService<T = ActorInterface> extends Function {
   /**
    * @private
    */
-  new (agentService: IcAgentService): T;
+  new (): T;
 }
 
 /**
@@ -77,10 +73,7 @@ export interface CreateActorOptions {
  * import { createActorService, provideIcAgent } from '@hadronous/ic-angular';
  * import { environment } from '../environments/environment';
  *
- * // temporary fix until DFX upgrades to Candid version 0.10.0
- * // with this version, the idlFactory will be correctly exported from the .did file
- * const { idlFactory } = require('../../../declarations/counter.did');
- * import { _SERVICE } from '../../../declarations/counter.did';
+ * import { idlFactory, _SERVICE } from '../../../declarations/example_backend.did';
  *
  * @Injectable({ providedIn: 'root' })
  * class CounterActorService extends createActorService<_SERVICE>({
@@ -94,7 +87,6 @@ export interface CreateActorOptions {
  *      apiGateway: environment.API_GATEWAY,
  *      fetchRootKey: !environment.IS_MAINNET,
  *    }),
- *    CounterActorService
  *  ],
  * };
  * ```
@@ -105,9 +97,11 @@ export function createIcActorService<T = Record<string, ActorMethod>>({
 }: CreateActorOptions): IcActorService<T> {
   const ActorClass = Actor.createActorClass(idlFactory);
 
-  @Injectable({ providedIn: 'root' })
+  @Injectable()
   class IcActorServiceImpl extends ActorClass {
-    constructor(agentService: IcAgentService) {
+    constructor() {
+      const agentService = inject(IcAgentService);
+
       super({
         canisterId,
         agent: agentService.getInnerAgent(),

@@ -25,10 +25,8 @@ export function serveIcApplication(
   const dotEnv = dfxJson.output_env_file ?? '.env';
   const envPath = resolve(context.workspaceRoot, dotEnv);
 
-  extensions = {
-    ...extensions,
-    buildPlugins: [...(extensions.buildPlugins || []), canisterPlugin(envPath)],
-  };
+  extensions.buildPlugins = extensions.buildPlugins || [];
+  extensions.buildPlugins.push(canisterPlugin(envPath));
 
   const proxyConfig = resolve(__dirname, 'proxy.conf.mjs');
 

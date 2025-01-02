@@ -2,9 +2,7 @@ import { ApplicationConfig } from '@angular/core';
 import { provideIcAgent, provideIcAuth } from '@hadronous/ic-angular';
 import { environment } from '../environments/environment';
 
-import { BackendActorService } from './backend-actor.service';
-
-export const appConfig: ApplicationConfig = {
+export const APP_CONFIG: ApplicationConfig = {
   providers: [
     provideIcAgent({
       apiGateway: environment.API_GATEWAY,
@@ -15,6 +13,5 @@ export const appConfig: ApplicationConfig = {
       idlOptions: { idleTimeout: 1_000 * 60 }, // 1 minute
       maxTimeToLive: BigInt(1_000 * 2), // 2 seconds
     }),
-    BackendActorService,
   ],
 };

@@ -1,81 +1,12 @@
 import {
-  APP_INITIALIZER,
   EnvironmentProviders,
+  inject,
   Injectable,
   InjectionToken,
   makeEnvironmentProviders,
+  provideAppInitializer,
 } from '@angular/core';
 import { HttpAgent, Identity } from '@dfinity/agent';
-
-/**
- * An Angular-native service that provides a wrapper around the `HttpAgent`
- * class from the `@dfinity/agent` library. This service is used internally
- * by the {@link IcActorService} and {@link IcAuthService} services and should
- * not need to be used by consumers of this library directly.
- *
- * Must be provided using the {@link provideIcAgent} function.
- *
- * @see [@dfinity/agent: HttpAgent](https://agent-js.icp.xyz/agent/classes/HttpAgent.html)
- *
- * @example
- * ```ts
- * import { ApplicationConfig } from '@angular/core';
- * import { provideIcAgent } from '@hadronous/ic-angular';
- * import { environment } from '../environments/environment';
- *
- * export const appConfig: ApplicationConfig = {
- *  providers: [
- *    provideIcAgent({
- *      apiGateway: environment.API_GATEWAY,
- *      fetchRootKey: !environment.IS_MAINNET,
- *      verifyQuerySignatures: true,
- *      retryTimes: 3,
- *      useQueryNonces: false,
- *    }),
- *  ],
- * };
- * ```
- */
-@Injectable({ providedIn: 'root' })
-export class IcAgentService {
-  /**
-   * @private
-   */
-  constructor(private readonly httpAgent: HttpAgent) {}
-
-  /**
-   * Get the wrapped `HttpAgent` instance.
-   *
-   * @returns The inner `HttpAgent` instance.
-   * @see [@dfinity/agent: HttpAgent](https://agent-js.icp.xyz/agent/classes/HttpAgent.html)
-   */
-  public getInnerAgent(): HttpAgent {
-    return this.httpAgent;
-  }
-
-  /**
-   * Fetch the root key from the IC network.
-   * WARNING: This should _NEVER_ be done on mainnet. Only when using a local
-   * replica such as DFX or PocketIC.
-   *
-   * @returns A promise that resolves when the root key has been fetched.
-   * @see [@dfinity/agent: fetchRootKey](https://agent-js.icp.xyz/agent/classes/HttpAgent.html#fetchRootKey)
-   */
-  public async fetchRootKey(): Promise<void> {
-    await this.httpAgent.fetchRootKey();
-  }
-
-  /**
-   * Replaces the current identity used by the inner `HttpAgent` instance
-   * to sign requests to canisters.
-   *
-   * @param identity The identity to replace the current identity with.
-   * @see [@dfinity/agent: replaceIdentity](https://agent-js.icp.xyz/agent/classes/HttpAgent.html#replaceIdentity)
-   */
-  public replaceIdentity(identity: Identity): void {
-    this.httpAgent.replaceIdentity(identity);
-  }
-}
 
 /**
  * Options for providing the {@link IcAgentService} using {@link provideIcAgent}.
@@ -125,8 +56,83 @@ export const IC_AGENT_OPTIONS = new InjectionToken<IcAgentOptions>(
   'IC_AGENT_OPTIONS',
 );
 
-function agentServiceFactory(options: IcAgentOptions): IcAgentService {
-  const httpAgent = new HttpAgent({
+/**
+ * An Angular-native service that provides a wrapper around the `HttpAgent`
+ * class from the `@dfinity/agent` library. This service is used internally
+ * by the {@link IcActorService} and {@link IcAuthService} services and should
+ * not need to be used by consumers of this library directly.
+ *
+ * Must be provided using the {@link provideIcAgent} function.
+ *
+ * @see [@dfinity/agent: HttpAgent](https://agent-js.icp.xyz/agent/classes/HttpAgent.html)
+ *
+ * @example
+ * ```ts
+ * import { ApplicationConfig } from '@angular/core';
+ * import { provideIcAgent } from '@hadronous/ic-angular';
+ * import { environment } from '../environments/environment';
+ *
+ * export const appConfig: ApplicationConfig = {
+ *  providers: [
+ *    provideIcAgent({
+ *      apiGateway: environment.API_GATEWAY,
+ *      fetchRootKey: !environment.IS_MAINNET,
+ *      verifyQuerySignatures: true,
+ *      retryTimes: 3,
+ *      useQueryNonces: false,
+ *    }),
+ *  ],
+ * };
+ * ```
+ */
+@Injectable({
+  providedIn: 'root',
+  useFactory: agentServiceFactory,
+})
+export class IcAgentService {
+  /**
+   * @private
+   */
+  constructor(private readonly httpAgent: HttpAgent) {}
+
+  /**
+   * Get the wrapped `HttpAgent` instance.
+   *
+   * @returns The inner `HttpAgent` instance.
+   * @see [@dfinity/agent: HttpAgent](https://agent-js.icp.xyz/agent/classes/HttpAgent.html)
+   */
+  public getInnerAgent(): HttpAgent {
+    return this.httpAgent;
+  }
+
+  /**
+   * Fetch the root key from the IC network.
+   * WARNING: This should _NEVER_ be done on mainnet. Only when using a local
+   * replica such as DFX or PocketIC.
+   *
+   * @returns A promise that resolves when the root key has been fetched.
+   * @see [@dfinity/agent: fetchRootKey](https://agent-js.icp.xyz/agent/classes/HttpAgent.html#fetchRootKey)
+   */
+  public async fetchRootKey(): Promise<void> {
+    await this.httpAgent.fetchRootKey();
+  }
+
+  /**
+   * Replaces the current identity used by the inner `HttpAgent` instance
+   * to sign requests to canisters.
+   *
+   * @param identity The identity to replace the current identity with.
+   * @see [@dfinity/agent: replaceIdentity](https://agent-js.icp.xyz/agent/classes/HttpAgent.html#replaceIdentity)
+   */
+  public replaceIdentity(identity: Identity): void {
+    this.httpAgent.replaceIdentity(identity);
+  }
+}
+
+function agentServiceFactory(): IcAgentService {
+  const options = inject(IC_AGENT_OPTIONS);
+
+  const httpAgent = HttpAgent.createSync({
     host: options.apiGateway,
     verifyQuerySignatures: options.verifyQuerySignatures,
     retryTimes: options.retryTimes,
@@ -136,15 +142,13 @@ function agentServiceFactory(options: IcAgentOptions): IcAgentService {
   return new IcAgentService(httpAgent);
 }
 
-function fetchRootKeyFactory(
-  agentService: IcAgentService,
-  options: IcAgentOptions,
-): () => Promise<void> {
-  return async () => {
-    if (options.fetchRootKey) {
-      await agentService.fetchRootKey();
-    }
-  };
+async function fetchRootKeyFactory(): Promise<void> {
+  const agentService = inject(IcAgentService);
+  const options = inject(IC_AGENT_OPTIONS);
+
+  if (options.fetchRootKey) {
+    await agentService.fetchRootKey();
+  }
 }
 
 /**
@@ -176,17 +180,7 @@ function fetchRootKeyFactory(
  */
 export function provideIcAgent(options: IcAgentOptions): EnvironmentProviders {
   return makeEnvironmentProviders([
-    {
-      provide: IcAgentService,
-      useFactory: agentServiceFactory,
-      deps: [IC_AGENT_OPTIONS],
-    },
     { provide: IC_AGENT_OPTIONS, useValue: options },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: fetchRootKeyFactory,
-      deps: [IcAgentService, IC_AGENT_OPTIONS],
-      multi: true,
-    },
+    provideAppInitializer(fetchRootKeyFactory),
   ]);
 }
