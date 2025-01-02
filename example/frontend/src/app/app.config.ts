@@ -10,7 +10,7 @@ export const APP_CONFIG: ApplicationConfig = {
     }),
     provideIcAuth({
       identityProvider: environment.IDENTITY_PROVIDER,
-      idlOptions: { idleTimeout: 1_000 * 60 }, // 1 minute
+      idlOptions: { idleTimeout: 2 * 1_000 * 60 }, // 2 minutes
       maxTimeToLive: BigInt(1_000 * 2), // 2 seconds
     }),
   ],
