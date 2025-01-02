@@ -50,31 +50,15 @@ echo "****** SYSTEM SETUP: PNPM version ******"
 pnpm --version
 
 # Set up DFX
-echo "****** SYSTEM SETUP: Installing DFX ******"
-$HOME/.cache/dfinity/uninstall.sh
-DFX_VERION=$(jq -r '.dfx' ./dfx.json) sh -ci "$(curl -sSL https://internetcomputer.org/install.sh)"
-dfx cache install
+echo "****** SYSTEM SETUP: Installing DFXVM ******"
+DFX_VERSION=$(jq -r '.dfx' ./dfx.json)
+DFXVM_INIT_YES=true DFX_VERSION=$DFX_VERSION sh -ci "$(curl -fsSL https://sdk.dfinity.org/install.sh)"
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  source "$HOME/Library/Application Support/org.dfinity.dfx/env"
+else
+  source "$HOME/.local/share/dfx/env"
+fi
 
 echo "****** SYSTEM SETUP: DFX version ******"
 dfx --version
-
-# Set up local replica
-echo "****** SYSTEM SETUP: Setting up NNS canisters ******"
-dfx extension install nns
-mkdir -p ~/.config/dfx
-cat <<EOF >~/.config/dfx/networks.json
-{
-  "local": {
-    "bind": "127.0.0.1:8080",
-    "type": "ephemeral",
-    "replica": {
-      "subnet_type": "system"
-    }
-  }
-}
-EOF
-
-dfx stop
-dfx start --clean --background
-dfx nns install
-dfx stop

@@ -30,9 +30,9 @@
     "@types/react": "^18.3.3",
     "search-insights": "^2.15.0",
     "@algolia/client-search": "^4.24.0",
-    "docusaurus-plugin-typedoc": "^1.0.3",
-    "typedoc": "^0.26.4",
-    "typedoc-plugin-markdown": "^4.2.1"
+    "docusaurus-plugin-typedoc": "^1.2.0",
+    "typedoc": "~0.27.6",
+    "typedoc-plugin-markdown": "^4.4.1"
   },
   "browserslist": {
     "production": [

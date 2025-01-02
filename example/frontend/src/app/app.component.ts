@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable, map } from 'rxjs';
 import { IcAuthService } from '@hadronous/ic-angular';
@@ -6,7 +11,6 @@ import { BackendActorService } from './backend-actor.service';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.Default,
   template: `
@@ -27,10 +31,10 @@ export class AppComponent implements OnInit {
   public readonly isAuthenticated$: Observable<boolean>;
   public readonly principal$: Observable<string | null>;
 
-  constructor(
-    private readonly backendActor: BackendActorService,
-    private readonly authService: IcAuthService,
-  ) {
+  private readonly backendActor = inject(BackendActorService);
+  private readonly authService = inject(IcAuthService);
+
+  constructor() {
     this.isAuthenticated$ = this.authService.isAuthenticated$;
     this.principal$ = this.authService.identity$.pipe(
       map(identity => identity?.getPrincipal().toText() ?? null),

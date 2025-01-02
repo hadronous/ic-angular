@@ -1,7 +1,13 @@
 {
-  "dfx": "0.21.0",
+  "dfx": "0.24.3",
   "version": 1,
   "output_env_file": ".env",
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:8080",
+      "type": "ephemeral"
+    }
+  },
   "canisters": {
     "example_backend": {
       "main": "example/backend/main.mo",
@@ -15,13 +21,25 @@
     "example_frontend": {
       "dependencies": ["example_backend"],
       "frontend": {
-        "entrypoint": "example/frontend/dist/browser/index.html"
+        "entrypoint": "example/frontend/dist/index.html"
       },
-      "source": ["example/frontend/dist/browser"],
-      "build": ["pnpm -F example build"],
+      "source": ["example/frontend/dist"],
+      "build": ["pnpm -F example-frontend... build"],
       "type": "assets",
       "gzip": true,
       "optimize": "cycles"
+    },
+    "internet_identity": {
+      "type": "custom",
+      "candid": "https://github.com/dfinity/internet-identity/releases/download/release-2024-01-05/internet_identity.did",
+      "wasm": "https://github.com/dfinity/internet-identity/releases/download/release-2024-01-05/internet_identity_dev.wasm.gz",
+      "specified_id": "rdmx6-jaaaa-aaaaa-aaadq-cai",
+      "remote": {
+        "id": {
+          "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai"
+        }
+      },
+      "frontend": {}
     }
   }
 }

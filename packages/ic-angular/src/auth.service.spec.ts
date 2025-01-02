@@ -36,7 +36,14 @@ describe('IcAuthService', () => {
     agentServiceMock = createAgentServiceMock();
     authClientMock = createAuthClientMock();
 
-    service = new IcAuthService(authOptionsMock, agentServiceMock);
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: IcAgentService, useValue: agentServiceMock },
+        provideIcAuth(authOptionsMock),
+      ],
+    });
+
+    service = TestBed.inject(IcAuthService);
   });
 
   it('should be created', () => {

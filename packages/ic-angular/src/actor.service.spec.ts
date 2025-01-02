@@ -21,7 +21,6 @@ import { Injectable } from '@angular/core';
 
 interface TestActor {
   say_hello: ActorMethod<[], string>;
-  set_greeting: ActorMethod<[string], string>;
 }
 
 const idlFactory: IDL.InterfaceFactory = ({ IDL }) => {
@@ -48,7 +47,14 @@ describe('createActorService', () => {
     agentServiceMock = createAgentServiceMock();
     agentServiceMock.getInnerAgent.and.returnValue(httpAgentMock);
 
-    service = new TestActorService(agentServiceMock);
+    TestBed.configureTestingModule({
+      providers: [
+        TestActorService,
+        { provide: IcAgentService, useValue: agentServiceMock },
+      ],
+    });
+
+    service = TestBed.inject(TestActorService);
   });
 
   it('should create', () => {

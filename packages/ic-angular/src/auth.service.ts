@@ -1,10 +1,10 @@
 import {
-  APP_INITIALIZER,
   EnvironmentProviders,
-  Inject,
+  inject,
   Injectable,
   InjectionToken,
   makeEnvironmentProviders,
+  provideAppInitializer,
 } from '@angular/core';
 import { AnonymousIdentity, Identity, SignIdentity } from '@dfinity/agent';
 import { AuthClient, AuthClientCreateOptions } from '@dfinity/auth-client';
@@ -41,14 +41,8 @@ export class IcAuthService {
 
   private authClient: AuthClient | undefined;
 
-  /**
-   * @private
-   */
-  constructor(
-    @Inject(IC_AUTH_OPTIONS)
-    private readonly options: IcAuthOptions,
-    private readonly agentService: IcAgentService,
-  ) {}
+  private readonly options = inject(IC_AUTH_OPTIONS);
+  private readonly agentService = inject(IcAgentService);
 
   /**
    * Sets the inner auth client to be used by this service.
@@ -264,26 +258,24 @@ export interface IcAuthOptions {
 
 const IC_AUTH_OPTIONS = new InjectionToken<IcAuthOptions>('IC_AUTH_OPTIONS');
 
-function setAuthClientFactory(
-  authService: IcAuthService,
-  options: IcAuthOptions,
-): () => Promise<void> {
-  return async () => {
-    const authClient = await AuthClient.create({
-      identity: options.identity,
-      storage: options.storage,
-      keyType: options.keyType,
-      idleOptions: {
-        captureScroll: options.idlOptions?.captureScroll,
-        disableIdle: options.idlOptions?.disableIdle,
-        idleTimeout: options.idlOptions?.idleTimeout,
-        scrollDebounce: options.idlOptions?.scrollDebounce,
-        disableDefaultIdleCallback: true,
-      },
-    });
+async function setAuthClientFactory(): Promise<void> {
+  const authService = inject(IcAuthService);
+  const options = inject(IC_AUTH_OPTIONS);
 
-    await authService.init(authClient);
-  };
+  const authClient = await AuthClient.create({
+    identity: options.identity,
+    storage: options.storage,
+    keyType: options.keyType,
+    idleOptions: {
+      captureScroll: options.idlOptions?.captureScroll,
+      disableIdle: options.idlOptions?.disableIdle,
+      idleTimeout: options.idlOptions?.idleTimeout,
+      scrollDebounce: options.idlOptions?.scrollDebounce,
+      disableDefaultIdleCallback: true,
+    },
+  });
+
+  await authService.init(authClient);
 }
 
 /**
@@ -316,13 +308,7 @@ function setAuthClientFactory(
  */
 export function provideIcAuth(options?: IcAuthOptions): EnvironmentProviders {
   return makeEnvironmentProviders([
-    IcAuthService,
     { provide: IC_AUTH_OPTIONS, useValue: options },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: setAuthClientFactory,
-      deps: [IcAuthService, IC_AUTH_OPTIONS],
-      multi: true,
-    },
+    provideAppInitializer(setAuthClientFactory),
   ]);
 }
