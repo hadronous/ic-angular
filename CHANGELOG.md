@@ -1,3 +1,9 @@
+## Unreleased
+
+### Fix
+
+- update idl timeout in example to 2 minutes
+
 ## 0.5.0 (2025-01-02)
 
 ## 0.5.0-b0 (2025-01-02)
